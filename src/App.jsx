@@ -57,8 +57,9 @@ export function App(params) {
         setDeck( [...deck] );
     }
 
-    function handleClick(card) {    
+    function handleClick(card) {   
         if (pick1===""){
+                setCount(count+1)
             setPick1(card);
             disableAndFlip(card, true);
         }
@@ -82,16 +83,20 @@ export function App(params) {
     const [deck, setDeck] = useState(cards);
     const [pick1, setPick1] = useState("");
     const [pick2, setPick2] = useState("");
+    const [count, setCount] = useState(0);
 
 
-    return <main>
+    return <><main>
         <div id="result">
-            <p id="feedback"></p>
+            <p id="feedback">{count}</p>
         </div>
         <div id="table">
             {(()=>{
-                for (let index = 0; index < 2; index++) {
-                } return <p></p>
+                let table =[]
+                for (let index = 0; index < deck.length; index++) {
+
+
+                } return table
             })()}
             {deck.map( (card,i) => {
                 return(
@@ -100,5 +105,10 @@ export function App(params) {
                 )
                 })}
         </div>
+        
     </main>
+    <footer>
+        made by Michal Rucinski
+    </footer>        
+    </>
 }
