@@ -1,0 +1,4 @@
+            let randomIndex = Math.floor(Math.random()*arr.length);
+            shuffled.push(arr[randomIndex]);
+            arr.splice(randomIndex, 1);
+            console.log(shuffled)

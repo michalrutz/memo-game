@@ -1,76 +1,104 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import './App.css';
+import { halloween } from "./list";
+
+
+//TO DO -> pick1(flip,disable) -> pick2(flip,disable)
+//  -> compare  -> if match(keep filpped, disabled)
+//              -> else (flip, able after 1 sec) 
+// shuffle
+// hide -> add filpped class -> toggle -> useState// shuffle
+
 
 export function App(params) {
-    const symbols = ["😄","😂","🥰","😘","🤑"];
+    let symbols = ["😄","😂","🥰","😘","🤑","🥵","🥶","🤡","😔","🤤"];
+    symbols = halloween;
 
-    //generate DECK with card Objects
     let cards = ((symbols) => {
         let newCards = [];
         for (let i = 0; i < symbols.length; i++) {
-            newCards.push({name:symbols[i], id:i+"_1", disabled:false})
-            newCards.push({name:symbols[i], id:i+"_2", disabled:false})
+            newCards.push({name:symbols[i], id:i+"_1", disabled:false, flipped:"back"})
+            newCards.push({name:symbols[i], id:i+"_2", disabled:false, flipped:"back"})
         };
         return newCards;
     })(symbols);
 
-    function reset() {
-        setDisabled(true)
-        setTimeout(() => {
-            setPick1(""); setPick2(""); setDisabled(false)
-        }, 1000);
-    }
-    function block({name,id},stop) {
-        let cardIndex = deck.findIndex( (card)=> card.id===id );
-        if (stop){
-            deck[cardIndex] = { name:"", id:id, disabled:stop};
-        }else{
-            deck[cardIndex] = { name:name, id:id, disabled:stop};
+    function shuffle(array) {
+        let arr = [...array]; // make a deep copy!
+        let num = arr.length;
+        let shuffled=[];
+        for (let i = 0; i < num; i++) {
+            let randomIndex = Math.floor(Math.random()*arr.length);
+            shuffled.push(arr[randomIndex]);
+            arr.splice(randomIndex, 1);
+            console.log(arr)
+            console.log(array)
         }
+        return shuffled
+    }
+
+    //generate DECK with card Objects
+   
+    useEffect( ()=>{ setDeck(shuffle(cards))}, [] );
+
+
+    //FUNCTIONS
+    function reset(card, time) {
+        setTimeout(() => {
+            setPick1(""); setPick2("");
+            if(card){
+                disableAndFlip(card,false,"back");      
+            }         
+        }, time);
+    }
+    function disableAndFlip(card,stop,flip="front") {
+        let cardIndex = deck.findIndex( (c)=> c.id===card.id );
+        deck[cardIndex] = { ...card, disabled:stop, flipped:flip};
         setDeck( [...deck] );
     }
 
     function handleClick(card) {    
         if (pick1===""){
             setPick1(card);
-            //disable
-            block(card, true);
+            disableAndFlip(card, true);
         }
-        else if (pick2===""){
-            block(card, true);
+        else if (pick2===""){ //second pick
+            disableAndFlip(card, true);
             setPick2(card);
             if (pick1.name===card.name){
-                document.getElementById("feedback").innerHTML="it's a match";
-                // use setDeck -> change disable to true
-                reset();
+                reset(false,0)
             }else {
-                document.getElementById("feedback").innerHTML="it's not a match";
-                block(pick1, false);
-                block(card, false);
-                reset();
+                disableAndFlip(pick1, false);
+                disableAndFlip(card, false);
+                reset(pick1,1000);
+                reset(card,1000);
             }
         }
         else{
-            console.log("cards are disabled")
+            console.log("the two picked cards are being compared, wait one second")
         }
-     
     }
 
     const [deck, setDeck] = useState(cards);
     const [pick1, setPick1] = useState("");
     const [pick2, setPick2] = useState("");
-    const [disabled, setDisabled] = useState(false);
 
-    
+
     return <main>
         <div id="result">
-            <p id="feedback">?</p>
+            <p id="feedback"></p>
         </div>
         <div id="table">
-            {deck.map( card => (
-                <div className={card.name+" card"} key={card.id} id={card.id} onClick={ card.disabled ? ()=>{console.log("STOPED")} :()=>handleClick(card)}>
-                    <p>{card.name}</p>
-                </div>))}
+            {(()=>{
+                for (let index = 0; index < 2; index++) {
+                } return <p></p>
+            })()}
+            {deck.map( (card,i) => {
+                return(
+                    <div className={card.name+" "+card.flipped+" card"} key={card.id} id={card.id} onClick={ card.disabled ? ()=>{console.log("STOPED")} : ()=>handleClick(card)}>
+                    <p>{card.flipped==="front" ? card.name : ""}</p></div>
+                )
+                })}
         </div>
     </main>
 }
