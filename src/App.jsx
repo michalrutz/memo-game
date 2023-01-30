@@ -2,35 +2,56 @@ import { useState } from "react"
 import './App.css';
 
 export function App(params) {
-    const cards = [
-        {name:"😄", id:1_1 },
-        {name:"😄", id:1_2 },
-        {name:"😂", id:2_1 },
-        {name:"😂", id:2_2 },
-        {name:"🥰", id:3_1 },
-        {name:"🥰", id:3_2 }
-    ]
+    const symbols = ["😄","😂","🥰","😘","🤑"];
+
+    //generate DECK with card Objects
+    let cards = ((symbols) => {
+        let newCards = [];
+        for (let i = 0; i < symbols.length; i++) {
+            newCards.push({name:symbols[i], id:i+"_1", disabled:false})
+            newCards.push({name:symbols[i], id:i+"_2", disabled:false})
+        };
+        return newCards;
+    })(symbols);
+
     function reset() {
         setDisabled(true)
         setTimeout(() => {
             setPick1(""); setPick2(""); setDisabled(false)
         }, 1000);
     }
+    function block({name,id},stop) {
+        let cardIndex = deck.findIndex( (card)=> card.id===id );
+        if (stop){
+            deck[cardIndex] = { name:"", id:id, disabled:stop};
+        }else{
+            deck[cardIndex] = { name:name, id:id, disabled:stop};
+        }
+        setDeck( [...deck] );
+    }
 
-    function handleClick({name,id}) {    
+    function handleClick(card) {    
         if (pick1===""){
-            setPick1(name);
+            setPick1(card);
+            //disable
+            block(card, true);
         }
         else if (pick2===""){
-            setPick2(name);
-            if (pick1===name){
-                console.log("is a match");
-                console.log(document.getElementById(id).setAttribute("stop", true))
+            block(card, true);
+            setPick2(card);
+            if (pick1.name===card.name){
+                document.getElementById("feedback").innerHTML="it's a match";
+                // use setDeck -> change disable to true
                 reset();
             }else {
-                console.log("it's not a match");
+                document.getElementById("feedback").innerHTML="it's not a match";
+                block(pick1, false);
+                block(card, false);
                 reset();
             }
+        }
+        else{
+            console.log("cards are disabled")
         }
      
     }
@@ -41,11 +62,15 @@ export function App(params) {
     const [disabled, setDisabled] = useState(false);
 
     
-    return <div className="table">
-        {deck.map( card => (
-            <div className={card.name+" card"} id={card.id} stop={"false"} onClick={ disabled ? ()=>{} :()=>handleClick(card)}>
-                <p>{card.name}</p>
-            </div>))}
-            {pick1}{pick2}
-    </div>
+    return <main>
+        <div id="result">
+            <p id="feedback">?</p>
+        </div>
+        <div id="table">
+            {deck.map( card => (
+                <div className={card.name+" card"} key={card.id} id={card.id} onClick={ card.disabled ? ()=>{console.log("STOPED")} :()=>handleClick(card)}>
+                    <p>{card.name}</p>
+                </div>))}
+        </div>
+    </main>
 }
