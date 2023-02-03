@@ -86,29 +86,27 @@ export function App(params) {
     const [count, setCount] = useState(0);
 
 
-    return <><main>
-        <div id="result">
-            <p id="feedback">{count}</p>
+    return <>
+    <main>
+    <div id="wrapper">
+       <div id="result">
+                <p id="count">{count}</p>
         </div>
         <div id="table">
-            {(()=>{
-                let table =[]
-                for (let index = 0; index < deck.length; index++) {
-
-
-                } return table
-            })()}
+        
             {deck.map( (card,i) => {
                 return(
-                    <div className={card.name+" "+card.flipped+" card"} key={card.id} id={card.id} onClick={ card.disabled ? ()=>{console.log("STOPED")} : ()=>handleClick(card)}>
+                    <div
+                        className={card.name+" "+card.flipped+" card"} key={card.id} id={card.id} 
+                        onClick={ card.disabled ? ()=>{console.log("STOPED")} : ()=>handleClick(card)}
+                        >
                     <p>{card.flipped==="front" ? card.name : ""}</p></div>
                 )
                 })}
         </div>
-        
-    </main>
-    <footer>
         made by Michal Rucinski
-    </footer>        
+        </div>
+    </main>
+           
     </>
 }
