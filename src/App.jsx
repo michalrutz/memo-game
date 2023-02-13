@@ -14,11 +14,19 @@ export function App(params) {
     let symbols = ["😄","😂","🥰","😘","🤑","🥵","🥶","🤡","😔","🤤"];
     symbols = halloween;
 
+    function Card(name, id, disabled=false, flipped="back") {
+        this.name = name
+        this.id = id
+        this.disabled = disabled
+        this.flipped = flipped
+    };
+
     let cards = ((symbols) => {
         let newCards = [];
         for (let i = 0; i < symbols.length; i++) {
-            newCards.push({name:symbols[i], id:i+"_1", disabled:false, flipped:"back"})
-            newCards.push({name:symbols[i], id:i+"_2", disabled:false, flipped:"back"})
+            newCards.push(new Card(symbols[i], i+"_1"))
+            newCards.push(new Card(symbols[i], i+"_2")
+            )
         };
         return newCards;
     })(symbols);

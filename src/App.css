@@ -99,7 +99,7 @@ html {
         background-color: black;
         width: 66px;
         height: 100px;
-        border: 0.2rem solid whitesmoke;
+        border: 0.2rem solid rgb(77,76,70);
         border-radius: 0.5rem;
     }
     card p{
